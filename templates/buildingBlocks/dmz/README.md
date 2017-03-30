@@ -2,7 +2,7 @@
 Use the DMZ template building block to create a DMZ capable of allowing access to specific network resources while keeping the rest of the network safely isolated from external users. This building block can be used to secure traffic between Azure and an on-premises datacenter or between Azure and the Internet. 
 
 ## Parameters
-This building block, **dmzSettings** and **virtualNetworkSettings**.
+This building block includes two parameters, **dmzSettings** and **virtualNetworkSettings**.
 
 ### dmzSettings
 
