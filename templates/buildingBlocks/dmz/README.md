@@ -213,7 +213,7 @@ To deploy the building block template using a parameter file hosted at a publicl
 #### Example
 The cmdlet below creates deploys the [internal-dmz-new-subnets](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/dmz/parameters/internal-dmz-new-subnets.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/dmz/parameters) in Github.
 
-Note that this scenario requires an existing resource group named `bb-dev-rg` and a VNet named `bb-dev-vnet` with an address space that includes all addresses through `10.0.2.0/24`.
+Note that this scenario requires an existing resource group named `bb-dev-rg`, and a VNet named `bb-dev-vnet` with a `10.0.0.0/22` address space. The VNet must have one subnet with a `10.0.1.0/24` address space, one with a `10.0.2.0/24` address space, and one named `GatewaySubnet` with any address space.
 
 ```PowerShell
 New-AzureRmResourceGroupDeployment -ResourceGroupName bb-dev-rg -TemplateUri https://raw.githubusercontent.com/mspnp/template-building-blocks/master/scenarios/dmz/azuredeploy.json   -templateParameterUriFromTemplate https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/dmz/parameters/internal-dmz-new-subnets.parameters.json
@@ -249,7 +249,7 @@ To deploy the building block template using a parameter file hosted at a publicl
 **Example**  
 The cmdlet below creates deploys the [internal-dmz-new-subnets](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/dmz/parameters/internal-dmz-new-subnets.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/dmz/parameters) in Github.  
 
-Note that this scenario requires an existing resource group named `bb-dev-rg` and a VNet named `bb-dev-vnet` with an address space that includes  addresses through `10.0.2.0/24`.
+Note that this scenario requires an existing resource group named `bb-dev-rg`, and a VNet named `bb-dev-vnet` with a `10.0.0.0/22` address space. The VNet must have one subnet with a `10.0.1.0/24` address space, one with a `10.0.2.0/24` address space, and one named `GatewaySubnet` with any address space.
 
 ```AzureCLI
 az login
