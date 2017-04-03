@@ -22,7 +22,7 @@ The **virtualMachinesSettings** parameter specifies properties for the VMs. It c
   Specifies the host name prefix for each VM's operating system.  
 - **size**  
   _Value._ _Required_.  
-  String representing size of the VMs to create. This string is listed in the `Size` column of the table that describes each VM type in the [sizes for Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-sizes) document. Note that this template creates premium storage accounts and only supports VM sizes that support premium storage. See the 'premium storage-supported VMs' section of the [high-performance premium storage and unmanaged and managed Azure VM disks]((https://docs.microsoft.com/azure/storage/storage-premium-storage) document for more information.  
+  String representing size of the VMs to create. This string is listed in the `Size` column of the table that describes each VM type in the [sizes for Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-sizes) document. Note that this template creates premium storage accounts and only supports VM sizes that support premium storage. See the 'premium storage-supported VMs' section of the [high-performance premium storage and unmanaged and managed Azure VM disks](https://docs.microsoft.com/azure/storage/storage-premium-storage) document for more information.  
 - **osType**  
   _Value_. _Required_.  
   Valid values: `linux` | `windows`  
@@ -260,7 +260,7 @@ To deploy the building block template using a parameter file hosted at a publicl
   ```
 
 **Example**  
-The command below creates a resource group named **bb-dev-rg** in the **westus** region, then deploys the [vnet-multiple-subnet-dns](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/multi-vm-n-nic-m-storage/parameters/single-vm.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/multi-vm-n-nic-m-storage) in Github.
+The command below creates a resource group named **bb-dev-rg** in the **westus** region, then deploys the [single-vm](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/multi-vm-n-nic-m-storage/parameters/single-vm.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/multi-vm-n-nic-m-storage) in Github.
 
 > Note that this deployment requires an existing VNet named **bb-dev-vnet** in the **bb-dev-rg** resource group. **bb-dev-vnet** also requires a subnet named **management**.
 
