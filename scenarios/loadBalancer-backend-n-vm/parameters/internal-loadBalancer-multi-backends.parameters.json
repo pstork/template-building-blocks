@@ -34,6 +34,7 @@
             "protocol": "Tcp",
             "backendPoolName": "lb-bep2",
             "frontendIPConfigurationName": "lbfe1",
+            "enableFloatingIP": false,
             "probeName": "lbp2"
           }
         ],
