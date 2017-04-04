@@ -27,14 +27,14 @@ Specifies configuration settings for the frontend IP pool. The frontend IP confi
   _Value_. _Required_.  
   Valid values: `internal` | `public`  
   Type of load balancer.  
-  - **internalLoadBalancerSettings**
-  _Object_. _Required_.
+  - **internalLoadBalancerSettings**  
+  _Object_. _Required_.  
   Specifies configuration settings for an internal load balancer. Set to an empty object for public load balancer. The internal load balancer configuration is specified using the following object:  
     - **privateIPAddress**  
     _Value_. _Required_.  
     IP address of the internal load balancer.  
-    - **subnetName**
-    _Value_. _Required_.
+    - **subnetName**  
+    _Value_. _Required_.  
     Existing subnet associated with the load balancer's private IP.  
 - **loadBalancingRules**  
 _Array of objects_. _Required_.  
@@ -42,69 +42,69 @@ Specifies configuration settings for one or more traffic handling rules. The tra
   - **name**  
   _Value_. _Required_.  
   Name of the rule.  
-  - **frontendPort**
-  _Value_. _Required_.
+  - **frontendPort**  
+  _Value_. _Required_.  
   Specifies a frontend port on the load balancer to which this rule applies.  
-  - **backendPort**
+  - **backendPort**  
   _Value_. _Required_.  
   Specifies a port on backend VMs to which the load balancer forwards traffic for this rule.  
-  - **protocol**
+  - **protocol**  
   _Value_. _Required_.  
   Valid values: `Tcp` | `Udp`  
   Specifies the protocol used for the rule.  
-  - **backendPoolName**
+  - **backendPoolName**  
   _Value_. _Required_.  
   Name of the backend IP pool. See **backendPools** for more information.  
   - **frontendIPConfigurationName**  
   _Value_. _Required_.  
   Name of the frontend IP pool. See **inboundNatRules** for more information.  
-  - **probeName**
+  - **probeName**  
   _Value_. _Required_.  
   Specifies the name of a health probe used to determine the health of a backend VM. See **probes** for more information.  
 - **probes**  
 _Array of objects_. _Required_.  
-Specifies configuration settings for one or more health probes used by the load balancer to determine the health of a backend VM. The health probes are configured using the following object:
-  - **name**
+Specifies configuration settings for one or more health probes used by the load balancer to determine the health of a backend VM. The health probes are configured using the following object:  
+  - **name**  
   _Value_. _Required_.  
   Name of the health probe. Associate this health probe with a load balancer rule by setting the **probeName** property to it in the **loadBalancingRules** section above.  
-  - **port**
+  - **port**  
   _Value_. _Required_.  
   Specifies the port number on the backend VM used for the health probe.  
-  - **protocol**
+  - **protocol**  
   _Value_. _Required_.  
   Valid values: `Http` | `Tcp`  
   Protocol used for the health probe.  
-  - **requestPath**
-  _Value_. _Required if **protocol** is set to `Http`, not used if set to `Tcp`_.
-  Specifies the HTTP path on a backend VM used for the health probe.
+  - **requestPath**  
+  _Value_. _Required if **protocol** is set to `Http`, not used if set to `Tcp`_.  
+  Specifies the HTTP path on a backend VM used for the health probe.  
 - **backendPools**  
-_Array of Objects_. _Required_.
+_Array of Objects_. _Required_.  
 Specifies configuration settings for a list of backend IP addresses used by the load balancer. The backend pool is configured using the following object:  
-  - **name**
-  _Value_. _Required_.
-  Name of the pool.  
-  - **nicIndex**
+  - **name**  
   _Value_. _Required_.  
-  Each of the backend VMs has one or more NICs. This value specifies the number of the NIC on the VM to which the load balancer will send traffic.
+  Name of the pool.  
+  - **nicIndex**  
+  _Value_. _Required_.  
+  Each of the backend VMs has one or more NICs. This value specifies the number of the NIC on the VM to which the load balancer will send traffic.  
 - **inboundNatRules**  
 _Array of objects_. _Required_.  
 Specifies configuration setting for one or more NAT rules used by the load balancer to direct inbound network traffic. The NAT rules are specified using the following object:  
-  - **namePrefix**
+  - **namePrefix**  
   _Value_. _Required_.  
-  Name of the rule. 
-  - **frontendIPConfigurationName** 
+  Name of the rule.  
+  - **frontendIPConfigurationName**  
   _Value_. _Required_.  
   Name of a valid frontend pool specified in the **frontendIPConfigurations** section.  
-  - **startingFrontendPort**
+  - **startingFrontendPort**  
   _Value_. _Required if **frontendPort** is not set_.  
   Specifies a starting port number that the NAT rule will map to a backend VM's port number. The building block template will then increment the port number by one for each VM in the backend pool. For example, if this value is set to `50001` and there are two VMs in the backend pool listening on port `3389`, the first NAT rule will forward traffic received on port `50001` to port `3389` on the first VM and will forward traffic received on port `50002` to port `3389` on the second VM. incrementing this port number for each rule.  
-  - **frontendPort**
+  - **frontendPort**  
   _Value_. _Required if **startingFrontendPort** is not set_.  
   Specifies a port on the load balancer to which this NAT rule applies.  
-  - **backendPort**
+  - **backendPort**  
   _Value_ _Required_.  
-  Specifies a port that the VMs in the backend pool listen on for this NAT rule.
-  - **natRuleType**
+  Specifies a port that the VMs in the backend pool listen on for this NAT rule.  
+  - **natRuleType**  
   _Value_. _Required_.  
   Valid values: `all` | `single` | `floatingIP`  
   Specifies port reuse on backend VMs. For more information see [multiple VIPs for Azure load balancer](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-multivip-overview).  
@@ -112,10 +112,10 @@ Specifies configuration setting for one or more NAT rules used by the load balan
   _Value_. _Required_.  
   Valid values: `Tcp` | `Udp`  
   Protocol used for this rule.  
-  - **vmIndex**
+  - **vmIndex**  
   _Value_. _Required if **frontendPort** is set, otherwise optional_.  
   The index number of the VM in the backend pool to which this NAT rule applies.  
-  - **nicIndex**
+  - **nicIndex**  
   _Value_. _Required_.  
   The index number of the NIC on the VM to which this NAT rule applies.  
 
@@ -132,7 +132,7 @@ _Value_. _Required_.
 Name of an existing VNet.  
 - **resourceGroup**  
 _Value_. _Required_.  
-Resource group that the VNet will be created in.
+Resource group that the VNet will be created in.  
 
 ### buildingBlockSettings
 
@@ -190,9 +190,9 @@ To deploy the building block template using a parameter file hosted at a publicl
   ```
 
 **Example**  
-The cmdlet below creates a resource group named **bb-dev-rg** in the **westus** region, then deploys the [internal-loadBalancer-multi-backends](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/parameters/internal-loadBalancer-multi-backends.parameters.json.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/multi-vm-n-nic-m-storage) in Github.
+The cmdlet below creates a resource group named **bb-dev-rg** in the **westus** region, then deploys the [internal-loadBalancer-multi-backends](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/parameters/internal-loadBalancer-multi-backends.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/multi-vm-n-nic-m-storage) in Github.
 
-> Note that this deployment requires an existing VNet named **bb-dev-vnet** in the **bb-dev-rg** resource group. **bb-dev-vnet** also requires a subnet named **management**.
+> Note that this deployment requires an existing VNet named **bb-dev-vnet** in the **bb-dev-rg** resource group. **bb-dev-vnet** also requires a subnet named **biz**.
 
 ```PowerShell
 New-AzureRmResourceGroupDeployment -ResourceGroupName bb-dev-rg -TemplateUri https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/azuredeploy.json -templateParameterUriFromTemplate https://raw.githubusercontent.com/mspnp/template-building-blocks/master/scenarios/loadBalancer-backend-n-vm/parameters/internal-loadBalancer-multi-backends.parameters.json 
@@ -202,24 +202,40 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName bb-dev-rg -TemplateUri htt
 
 ### Azure CLI
 
-To deploy the building block using a parameters file available from a URI:
 
-1. Upload a parameters file to a location with a publicly available URL.
-2. Run the command shown below to deploy the VNet
-	
-		azure config mode arm
-		azure group deployment create <Resource Group Name>
-		  --template-uri https://raw.githubusercontent.com/mspnp/template-building-blocks/master/scenarios/loadBalancer-backend-n-vm/azuredeploy.json 
-		  -p "{\"templateParameterUri\":{\"value\":\"<parameters File Public URI>\"}}"
+Before you begin, install the latest version of the [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli).
 
-	**Example**  
-	The command below deploys a loadBalancer-backend-n-vm building block to the **app1-rg** resource group using a parameter file hosted in Azure blob storage.
-	
-		azure config mode arm
-		azure group deployment create app1-rg --template-uri https://raw.githubusercontent.com/mspnp/template-building-blocks/master/scenarios/loadBalancer-backend-n-vm/azuredeploy.json -p "{\"templateParameterUri\":{\"value\":\"http://buildingblocksample.blob.core.windows.net/building-block-params/nsg.parameters.json\"}}"
+To deploy the building block template using a parameter file hosted at a publicly available URI, follow these steps:
 
-## Extending the building block
+1. Upload your parameter file to a location with a publicly available URI.
+2. Log in to Azure using your selected subscripton:
+  ```AzureCLI
+  az login
+  ```
+3. Set your selected subscription:
+  ```AzureCLI
+  az account set --subscription <your subscripton ID>
+  ```
+4. If you do not have an existing resource group, create a new one using the following command:
+  ```AzureCLI
+  az group create -l <Target Azure Region> -n <Resource Group Name> 
+  ```
+5. Run the command shown below to deploy the VNet
+  ```AzureCLI
+  az group deployment create -g <Resource Group Name>
+  --template-uri https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/multi-vm-n-nic-m-storage/azuredeploy.json
+  --parameters "{\"templateParameterUri\":{\"value\":\"<parameter file public URI>\"}}"
+  ```
 
-You can extend existing building blocks, and create your own building blocks. Each building block is created using a set of templates. The flowchart below represents the different templates used to create the load balancer building block.
+**Example**  
+The command below creates a resource group named **bb-dev-rg** in the **westus** region, then deploys the [internal-loadBalancer-multi-backends](https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/parameters/internal-loadBalancer-multi-backends.parameters.json) parameter file from the [scenarios folder](https://github.com/mspnp/template-building-blocks/tree/v1.0.0/scenarios/loadBalancer-backend-n-vm) in Github.
 
-![DMZ template flowchart](./flowchart-lb.png)
+> Note that this deployment requires an existing VNet named **bb-dev-vnet** in the **bb-dev-rg** resource group. **bb-dev-vnet** also requires a subnet named **biz**.
+
+```AzureCLI
+az login
+az group create -l "westus" -n "bb-dev-rg"
+az group deployment create -g bb-dev-rg --template-uri https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/azuredeploy.json --parameters "{\"templateParameterUri\":{\"value\":\"https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/scenarios/loadBalancer-backend-n-vm/parameters/internal-loadBalancer-multi-backends.parameters.json\"}}"
+```
+
+> The parameter files in the scenarios folder include hard-coded administrator usernames and passwords. It is **strongly** recommended that you immediately change the administrator password on the NVA VMs when the deployment is complete.
