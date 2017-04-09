@@ -28,10 +28,12 @@ configuration CreateJoinFarm
 	)
 	
 	Import-DscResource -ModuleName xActiveDirectory, SharePointDsc
+    [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
+    [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
     [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password)
 
     $RebootVirtualMachine = $false
-
+	$PSDscAllowDomainUser = $true
     if ($DomainName)
     {
         $RebootVirtualMachine = $true
@@ -54,8 +56,8 @@ configuration CreateJoinFarm
 			{
 				DatabaseServer            = $SqlAlwaysOnEndpointName
 				FarmConfigDatabaseName    = "SP_Config_2016"
-				Passphrase                = $Passphrase.Password
-				FarmAccount               = $FarmAccount
+				Passphrase                = $PassphraseCreds
+				FarmAccount               = $FarmAccountCreds
 				PsDscRunAsCredential      = $SPSetupAccountCreds
 				AdminContentDatabaseName  = "SP_AdminContent"
 				CentralAdministrationPort = "2016"
@@ -69,7 +71,7 @@ configuration CreateJoinFarm
 			{
 				DatabaseServer            = $SqlAlwaysOnEndpointName
 				FarmConfigDatabaseName    = "SP_Config_2016"
-				Passphrase                = $Passphrase.Password
+				Passphrase                = $PassphraseCreds
 				PsDscRunAsCredential      = $SPSetupAccountCreds
 				ServerRole 				  = $ServerRole
 				DependsOn                 = "[xADUser]CreateFarmAccount"
