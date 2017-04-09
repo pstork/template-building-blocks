@@ -48,7 +48,7 @@ configuration CreateJoinFarm
             Ensure = "Present"
         }
 		
-		if ($CreateFarm ==  "True")
+		if ($CreateFarm -eq  "True")
 		{
 	    SPCreateFarm CreateSPFarm
 			{
