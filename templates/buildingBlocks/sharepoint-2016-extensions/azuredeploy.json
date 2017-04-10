@@ -17,7 +17,7 @@
   },
   "variables": {
     "templateUniqueString": "[uniqueString(concat(string(parameters('deploymentContext')), string(parameters('virtualMachinesExtensionSettings'))))]",
-    "extTemplate": "[uri(deployment().properties.templateLink.uri, '../../resources/Microsoft.Compute/virtualMachines/extensions/virtualMachines-extensions.json')]"
+    "extTemplate": "[uri(deployment().properties.templateLink.uri, '../../resources/SharePoint2016/virtualMachines-extensions.json')]"
   },
   "resources": [
     {
