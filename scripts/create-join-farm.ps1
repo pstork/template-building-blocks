@@ -1,36 +1,26 @@
 configuration CreateJoinFarm
 {
-	param
-    (
-		[Parameter(Mandatory)]
-        [String]$domainName,
-		
-        [Parameter(Mandatory)]
-        [String]$SqlAlwaysOnEndpointName,
-		
-		[Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Passphrase,
 
-		[Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$FarmAccount,
-
-        [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$SPSetupAccount,
+        [String]$domainName = "Contoso"
 		
-		[Parameter(Mandatory)]
-        [String]$ServerRole,
+        [String]$SqlAlwaysOnEndpointName = ""
 		
-		[Parameter(Mandatory)]
-        [String]$CreateFarm,
+		$secpasswd = ConvertTo-SecureString “AweS0me@PW” -AsPlainText -Force
 
-        [Int]$RetryCount=20,
+        [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("contoso\testuser", $secpasswd)
+
+        [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("contoso\sp_install", $secpasswd)
+
+        [System.Management.Automation.PSCredential]$SPSetupAccountCreds  = New-Object System.Management.Automation.PSCredential ("contoso\testuser", $secpasswd)
+		
+        [String]$ServerRole = "Application"
+		
+        [String]$CreateFarm = "True"
+
+        [Int]$RetryCount=20
         [Int]$RetryIntervalSec=30
-	)
 	
 	Import-DscResource -ModuleName xActiveDirectory, SharePointDsc
-    [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
-    [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
-    [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password)
 
     $RebootVirtualMachine = $false
 	$PSDscAllowDomainUser = $true
@@ -45,7 +35,7 @@ configuration CreateJoinFarm
         {
             DomainAdministratorCredential = $SPSetupAccountCreds
             DomainName = $DomainName
-            UserName = $FarmAccount.UserName
+            UserName = "Testuser"
             Password = $FarmAccount.Password
             Ensure = "Present"
         }
