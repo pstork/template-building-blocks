@@ -1,25 +1,37 @@
 configuration CreateJoinFarm
 {
-
-        [String]$domainName = "Contoso"
+	param
+    (
+		[Parameter(Mandatory)]
+        [String]$domainName,
 		
-        [String]$SqlAlwaysOnEndpointName = "ra-sp2016-sql-hadr"
+        [Parameter(Mandatory)]
+        [String]$SqlAlwaysOnEndpointName,
 		
-		$secpasswd = ConvertTo-SecureString “AweS0me@PW” -AsPlainText -Force
+		[Parameter(Mandatory)]
+        [System.Management.Automation.PSCredential]$Passphrase,
 
-        [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("contoso\testuser", $secpasswd)
+		[Parameter(Mandatory)]
+        [System.Management.Automation.PSCredential]$FarmAccount,
 
-        [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("contoso\sp_install", $secpasswd)
-
-        [System.Management.Automation.PSCredential]$SPSetupAccountCreds  = New-Object System.Management.Automation.PSCredential ("contoso\testuser", $secpasswd)
+        [Parameter(Mandatory)]
+        [System.Management.Automation.PSCredential]$SPSetupAccount,
 		
-        [String]$ServerRole = "Application"
+		[Parameter(Mandatory)]
+        [String]$ServerRole,
 		
-        [String]$CreateFarm = "True"
+		[Parameter(Mandatory)]
+        [String]$CreateFarm,
 
-        [Int]$RetryCount=20
+        [Int]$RetryCount=20,
         [Int]$RetryIntervalSec=30
+	)
 	
+	Import-DscResource -ModuleName xActiveDirectory, SharePointDsc
+    [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
+    [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
+    [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password) 
+
 	Import-DscResource -ModuleName xActiveDirectory, SharePointDsc
 
     $RebootVirtualMachine = $false
@@ -35,7 +47,7 @@ configuration CreateJoinFarm
         {
             DomainAdministratorCredential = $SPSetupAccountCreds
             DomainName = $DomainName
-            UserName = "Testuser"
+            UserName = $FarmAccount.UserName
             Password = $FarmAccount.Password
             Ensure = "Present"
         }
