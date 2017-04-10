@@ -3,7 +3,7 @@ configuration CreateJoinFarm
 
         [String]$domainName = "Contoso"
 		
-        [String]$SqlAlwaysOnEndpointName = ""
+        [String]$SqlAlwaysOnEndpointName = "ra-sp2016-sql-hadr"
 		
 		$secpasswd = ConvertTo-SecureString “AweS0me@PW” -AsPlainText -Force
 
