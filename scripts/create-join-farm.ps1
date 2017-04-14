@@ -9,6 +9,9 @@ configuration CreateJoinFarm
         [String]$SqlAlwaysOnEndpointName,
 		
 		[Parameter(Mandatory)]
+        [String]$ServerRole,
+		
+		[Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Passphrase,
 
 		[Parameter(Mandatory)]
@@ -16,9 +19,6 @@ configuration CreateJoinFarm
 
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$SPSetupAccount,
-		
-		[Parameter(Mandatory)]
-        [String]$ServerRole,
 		
         [Int]$RetryCount=20,
         [Int]$RetryIntervalSec=30
