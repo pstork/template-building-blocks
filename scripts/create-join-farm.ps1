@@ -24,7 +24,7 @@ configuration CreateJoinFarm
         [Int]$RetryIntervalSec=30
 	)
 	
-	Import-DscResource -ModuleName xActiveDirectory, SharePointDsc
+	Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, SharePointDsc
  #   [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
     [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
     [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password) 
@@ -67,7 +67,7 @@ configuration CreateJoinFarm
 			PsDscRunAsCredential      = $SPSetupAccountCreds
 			AdminContentDatabaseName  = "SP_AdminContent"
 			CentralAdministrationPort = "2016"
-			RunCentralAdmin           = $false
+			RunCentralAdmin           = $true
 			ServerRole 				  = $ServerRole
 			DependsOn                 = "[xADUser]CreateFarmAccount"
 		}
