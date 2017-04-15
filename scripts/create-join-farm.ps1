@@ -10,6 +10,9 @@ configuration CreateJoinFarm
 		
 		[Parameter(Mandatory)]
         [String]$ServerRole,
+
+		[Parameter(Mandatory)] 
+		[String]$driveletter,
 		
 		[Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Passphrase,
@@ -24,7 +27,7 @@ configuration CreateJoinFarm
         [Int]$RetryIntervalSec=30
 	)
 	
-	Import-DscResource -ModuleName PSDesiredStateConfiguration, xComputerManagement, xActiveDirectory, SharePointDsc
+	Import-DscResource -ModuleName PSDesiredStateConfiguration, xStorage, xComputerManagement, xActiveDirectory, SharePointDsc
  #   [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
     [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
     [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password) 
@@ -40,10 +43,26 @@ configuration CreateJoinFarm
 	
 	node "localhost"
     {
+       xWaitforDisk Disk2
+        {
+             DiskNumber = 2
+             RetryIntervalSec =$RetryIntervalSec
+             RetryCount = $RetryCount
+        }
+
+        xDisk ADDataDisk2
+        {
+            DiskNumber = 2
+            DriveLetter = $driveletter
+            FSLabel = 'Data'
+			DependsOn = '[xWaitforDisk]Disk2'
+         }
+		
 		WindowsFeature ADPowerShell
 		{
 			Ensure = "Present"
 			Name = "RSAT-AD-PowerShell"
+			DependsOn = '[xDisk]ADDataDisk2'
 		}
 	
         xADUser CreateFarmAccount
