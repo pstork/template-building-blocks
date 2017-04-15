@@ -24,7 +24,7 @@ configuration CreateJoinFarm
         [Int]$RetryIntervalSec=30
 	)
 	
-	Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, SharePointDsc
+	Import-DscResource -ModuleName PSDesiredStateConfiguration, xComputerManagement, xActiveDirectory, SharePointDsc
  #   [System.Management.Automation.PSCredential]$PassphraseCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Passphrase.UserName)", $Passphrase.Password)
     [System.Management.Automation.PSCredential]$FarmAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($FarmAccount.UserName)", $FarmAccount.Password)
     [System.Management.Automation.PSCredential]$SPSetupAccountCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($SPSetupAccount.UserName)", $SPSetupAccount.Password) 
@@ -37,6 +37,7 @@ configuration CreateJoinFarm
     {
         $RebootVirtualMachine = $true
     }
+	
 	node "localhost"
     {
 		WindowsFeature ADPowerShell

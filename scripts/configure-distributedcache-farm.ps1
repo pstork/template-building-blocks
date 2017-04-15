@@ -1,4 +1,4 @@
-configuration ConfigureFarm
+configuration ConfigureSPServers
 {
 	param
     (
