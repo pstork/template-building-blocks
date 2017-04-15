@@ -106,12 +106,6 @@ configuration CreateJoinFarm
 			DependsOn                 = "[xADUser]CreateFarmAccount"
 		}
 
-		WindowsFeature ADPowerShell
-		{
-			Ensure = "Present"
-			Name = "RSAT-AD-PowerShell"
-		}
-	
         xCredSSP CredSSPServer 
         { 
             Ensure = "Present"
