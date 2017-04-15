@@ -17,6 +17,9 @@ configuration CreateJoinFarm
 		[Parameter(Mandatory)] 
 		[String]$driveletter,
 		
+		[Parameter(Mandatory)] 
+		[String]$CentralAdmin,
+		
 		[Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Passphrase,
 
@@ -54,6 +57,11 @@ configuration CreateJoinFarm
     {
         $RebootVirtualMachine = $true
     }
+	$runCentralAdmin = $false
+	if ($CentralAdmin.ToLower() -eq "true")
+	{
+		$runCentralAdmin = $true
+	}
 	
 	node "localhost"
     {
@@ -101,7 +109,7 @@ configuration CreateJoinFarm
 			PsDscRunAsCredential      = $SPSetupAccountCreds
 			AdminContentDatabaseName  = "SP_AdminContent"
 			CentralAdministrationPort = "2016"
-			RunCentralAdmin           = $true
+			RunCentralAdmin           = $runCentralAdmin
 			ServerRole 				  = $ServerRole
 			DependsOn                 = "[xADUser]CreateFarmAccount"
 		}
