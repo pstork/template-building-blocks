@@ -32,7 +32,6 @@ configuration BuildSPTServers
             DiskNumber = 2
             DriveLetter = $driveletter
             FSLabel = 'Data'
-            Size = 128GB
 			DependsOn = '[xWaitforDisk]Disk2'
          }
    }
