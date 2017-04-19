@@ -196,7 +196,7 @@ configuration CreateJoinFarm
         SPDiagnosticLoggingSettings ApplyDiagnosticLogSettings
         {
             PsDscRunAsCredential                        = $SPSetupAccountCreds
-            LogPath                                     = "G:\ULS"
+            LogPath                                     = "F:\ULS"
             LogSpaceInGB                                = 5
             AppAnalyticsAutomaticUploadEnabled          = $false
             CustomerExperienceImprovementProgramEnabled = $true
@@ -222,7 +222,7 @@ configuration CreateJoinFarm
             Name                  = "Usage Service Application"
             DatabaseName          = "SP2016_Usage"
             UsageLogCutTime       = 5
-            UsageLogLocation      = "G:\UsageLogs"
+            UsageLogLocation      = "F:\UsageLogs"
             UsageLogMaxFileSizeKB = 1024
             PsDscRunAsCredential  = $SPSetupAccountCreds
             DependsOn             = "[SPManagedAccount]WebPoolManagedAccount"
