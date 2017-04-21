@@ -160,7 +160,7 @@ configuration CreateJoinFarm
             Ensure 							= "Present"
             Password 						= $ServicePoolManagedAccount
             DomainAdministratorCredential 	= $SPSetupAccountCreds
-			DependsOn                 		= "[WindowsFeature]ADPowerShell"
+			DependsOn                 		= @("[WindowsFeature]ADPowerShell","[SPFarm]CreateSPFarm")
         }		
 
         SPManagedAccount ServicePoolManagedAccount
