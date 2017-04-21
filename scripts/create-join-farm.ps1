@@ -106,7 +106,7 @@ configuration CreateJoinFarm
             DisplayName 					= "Service Pool Account"
             PasswordNeverExpires 			= $true            
             Ensure 							= "Present"
-            Password 						= $ServicePoolManagedAccount
+            Password 						= $ServicePoolManagedAccountCreds
             DomainAdministratorCredential 	= $SPSetupAccountCreds
 			DependsOn                 		= "[WindowsFeature]ADPowerShell"
         }		
@@ -118,7 +118,7 @@ configuration CreateJoinFarm
             DisplayName 					= "Web App Pool Account"
             PasswordNeverExpires 			= $true            
             Ensure 							= "Present"
-            Password 						= $WebPoolManagedAccount
+            Password 						= $WebPoolManagedAccountCreds
             DomainAdministratorCredential 	= $SPSetupAccountCreds
 			DependsOn                 		= "[xADUser]ServicePoolManagedAccount"
         }		
