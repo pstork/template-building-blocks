@@ -99,6 +99,30 @@ configuration CreateJoinFarm
 			DependsOn                 = "[WindowsFeature]ADPowerShell"
         }
 		
+       xADUser ServicePoolManagedAccount
+        {
+            DomainName 						= $domainName
+            UserName 						= $ServicePoolManagedAccount.UserName
+            DisplayName 					= "Service Pool Account"
+            PasswordNeverExpires 			= $true            
+            Ensure 							= "Present"
+            Password 						= $ServicePoolManagedAccount
+            DomainAdministratorCredential 	= $SPSetupAccountCreds
+			DependsOn                 		= "[WindowsFeature]ADPowerShell"
+        }		
+
+        xADUser WebPoolManagedAccount
+        {
+            DomainName 						= $domainName
+            UserName 						= $WebPoolManagedAccount.UserName
+            DisplayName 					= "Web App Pool Account"
+            PasswordNeverExpires 			= $true            
+            Ensure 							= "Present"
+            Password 						= $WebPoolManagedAccount
+            DomainAdministratorCredential 	= $SPSetupAccountCreds
+			DependsOn                 		= "[xADUser]ServicePoolManagedAccount"
+        }		
+
 	    SPFarm CreateSPFarm
 		{
 			Ensure                    = "Present"
@@ -111,7 +135,7 @@ configuration CreateJoinFarm
 			CentralAdministrationPort = "2016"
 			RunCentralAdmin           = $runCentralAdmin
 			ServerRole 				  = $ServerRole
-			DependsOn                 = "[xADUser]CreateFarmAccount"
+			DependsOn                 = @("[xADUser]CreateFarmAccount", "[xADUser]ServicePoolManagedAccount", "[xADUser]WebPoolManagedAccount")
 		}
 
         xCredSSP CredSSPServer 
@@ -151,38 +175,15 @@ configuration CreateJoinFarm
 			DependsOn                 		= "[WindowsFeature]ADPowerShell"
         }		
 
-       xADUser ServicePoolManagedAccount
-        {
-            DomainName 						= $domainName
-            UserName 						= $ServicePoolManagedAccount.UserName
-            DisplayName 					= "Service Pool Account"
-            PasswordNeverExpires 			= $true            
-            Ensure 							= "Present"
-            Password 						= $ServicePoolManagedAccount
-            DomainAdministratorCredential 	= $SPSetupAccountCreds
-			DependsOn                 		= @("[WindowsFeature]ADPowerShell","[SPFarm]CreateSPFarm")
-        }		
-
         SPManagedAccount ServicePoolManagedAccount
         {
             AccountName          = $ServicePoolManagedAccountCreds.UserName
             Account              = $ServicePoolManagedAccountCreds
             PsDscRunAsCredential = $SPSetupAccountCreds
             Ensure               = 'Present'
-            DependsOn            = "[xADUser]ServicePoolManagedAccount"
+            DependsOn            = @("[SPFarm]CreateSPFarm", "[xADUser]ServicePoolManagedAccount")
         }
 
-        xADUser WebPoolManagedAccount
-        {
-            DomainName 						= $domainName
-            UserName 						= $WebPoolManagedAccount.UserName
-            DisplayName 					= "Web App Pool Account"
-            PasswordNeverExpires 			= $true            
-            Ensure 							= "Present"
-            Password 						= $WebPoolManagedAccount
-            DomainAdministratorCredential 	= $SPSetupAccountCreds
-			DependsOn                 		= "[SPManagedAccount]ServicePoolManagedAccount"
-        }		
 
         SPManagedAccount WebPoolManagedAccount
         {
@@ -190,7 +191,7 @@ configuration CreateJoinFarm
             Account              = $WebPoolManagedAccountCreds
             Ensure               = 'Present'
             PsDscRunAsCredential = $SPSetupAccountCreds
-            DependsOn            = "[xADUser]WebPoolManagedAccount"
+            DependsOn            = @("[SPFarm]CreateSPFarm", "[xADUser]WebPoolManagedAccount")
         }
 
         SPDiagnosticLoggingSettings ApplyDiagnosticLogSettings
@@ -214,7 +215,7 @@ configuration CreateJoinFarm
             ScriptErrorReportingDelay                   = 30
             ScriptErrorReportingEnabled                 = $true
             ScriptErrorReportingRequireAuth             = $true
-            DependsOn                                   = "[SPManagedAccount]WebPoolManagedAccount"
+            DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
  
         SPUsageApplication UsageApplication 
@@ -225,7 +226,7 @@ configuration CreateJoinFarm
             UsageLogLocation      = "F:\UsageLogs"
             UsageLogMaxFileSizeKB = 1024
             PsDscRunAsCredential  = $SPSetupAccountCreds
-            DependsOn             = "[SPManagedAccount]WebPoolManagedAccount"
+            DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
 #            DependsOn             = "[SPFarmAdministrators]AddFarmAdmins"
         }
 
@@ -234,7 +235,7 @@ configuration CreateJoinFarm
             Name                 = "State Service Application"
             DatabaseName         = "SP2016_State"
             PsDscRunAsCredential = $SPSetupAccountCreds
-           DependsOn             = "[SPManagedAccount]WebPoolManagedAccount"
+            DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
 #           DependsOn            = "[SPFarmAdministrators]AddFarmAdmins"
         }
  
@@ -248,7 +249,7 @@ configuration CreateJoinFarm
                 ServiceAccount       = $ServicePoolManagedAccountCreds.UserName
                 PsDscRunAsCredential = $SPSetupAccountCreds
                 CreateFirewallRules  = $true
-                DependsOn            = '[SPManagedAccount]ServicePoolManagedAccount'
+            DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
             }
         }     
         #**********************************************************
@@ -264,7 +265,7 @@ configuration CreateJoinFarm
             Name                 = $serviceAppPoolName
             ServiceAccount       = $ServicePoolManagedAccount.UserName
             PsDscRunAsCredential = $SPSetupAccountCreds
-             DependsOn           = "[SPManagedAccount]WebPoolManagedAccount"
+             DependsOn           = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
 		
         SPWebApplication SharePointSites
@@ -278,7 +279,7 @@ configuration CreateJoinFarm
             Url                    = "http://Portal.$DomainFQDNName"
             Port                   = 80
             PsDscRunAsCredential   = $SPSetupAccountCreds
-            DependsOn              = "[SPManagedAccount]WebPoolManagedAccount"
+            DependsOn              = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
         
         SPWebApplication OneDriveSites
@@ -293,7 +294,7 @@ configuration CreateJoinFarm
             Url                    = "http://OneDrive.$DomainFQDNName"
             Port                   = 80
             PsDscRunAsCredential   = $SPSetupAccountCreds
-            DependsOn              = "[SPManagedAccount]WebPoolManagedAccount"
+            DependsOn              = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
 
         SPCacheAccounts WebAppCacheAccounts
