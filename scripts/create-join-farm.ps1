@@ -267,7 +267,8 @@ configuration CreateJoinFarm
             PsDscRunAsCredential = $SPSetupAccountCreds
              DependsOn           = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
-		
+     if ($ServerRole -eq "WebFrontEnd")
+		{		
         SPWebApplication SharePointSites
         {
             Name                   = "SharePoint Sites"
@@ -334,7 +335,7 @@ configuration CreateJoinFarm
             PsDscRunAsCredential     = $SPSetupAccountCreds
             DependsOn                = "[SPWebApplication]OneDriveSites"
         }
-
+}
         #**********************************************************
         # Service instances
         #
