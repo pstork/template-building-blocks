@@ -469,8 +469,10 @@ configuration CreateJoinFarm
         #**********************************************************
         LocalConfigurationManager
         {
-            RebootNodeIfNeeded = $true
+           RebootNodeIfNeeded = $true
+            ActionAfterReboot = 'ContinueConfiguration'
             ConfigurationMode = 'ApplyOnly'
-        }
+            AllowModuleOverWrite = $true
+		}
 	}
 }
