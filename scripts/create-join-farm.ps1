@@ -86,6 +86,13 @@ configuration CreateJoinFarm
 			Name = "RSAT-AD-PowerShell"
 			DependsOn = '[xDisk]ADDataDisk2'
 		}
+
+		WindowsFeature DNSPowerShell
+		{
+			Ensure = "Present"
+			Name = "RSAT-DNS-Server"
+			DependsOn = '[xDisk]ADDataDisk2'
+		}
 	
         xADUser CreateFarmAccount
         {
@@ -245,6 +252,7 @@ configuration CreateJoinFarm
             {
                 Name                 = "AppFabricCachingService"
                 Ensure               = "Present"
+                ServerProvisionOrder = @("dch1.$DomainFQDNName","dch2.$DomainFQDNName")
                 CacheSizeInMB        = 1024
                 ServiceAccount       = $ServicePoolManagedAccountCreds.UserName
                 PsDscRunAsCredential = $SPSetupAccountCreds
@@ -452,14 +460,14 @@ configuration CreateJoinFarm
             SPSearchTopology LocalSearchTopology
             {
                 ServiceAppName          = "Search Service Application"
-                Admin                   = $env:ComputerName
-                Crawler                 = $env:ComputerName
-                ContentProcessing       = $env:ComputerName
-                AnalyticsProcessing     = $env:ComputerName
-                QueryProcessing         = $env:ComputerName
+                Admin                   = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
+                Crawler                 = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
+                ContentProcessing       = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
+                AnalyticsProcessing     = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
+                QueryProcessing         = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
                 PsDscRunAsCredential    = $SPSetupAccountcreds
                 FirstPartitionDirectory = "F:\SearchIndexes\0"
-                IndexPartition          = $env:ComputerName
+                IndexPartition          = @("srch1.$DomainFQDNName","srch2.$DomainFQDNName")
                 DependsOn               = "[SPSearchServiceApp]SearchServiceApp"
             }
         }
