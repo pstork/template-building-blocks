@@ -234,7 +234,6 @@ configuration CreateJoinFarm
             UsageLogMaxFileSizeKB = 1024
             PsDscRunAsCredential  = $SPSetupAccountCreds
             DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
-#            DependsOn             = "[SPFarmAdministrators]AddFarmAdmins"
         }
 
         SPStateServiceApp StateServiceApp
@@ -243,7 +242,6 @@ configuration CreateJoinFarm
             DatabaseName         = "SP2016_State"
             PsDscRunAsCredential = $SPSetupAccountCreds
             DependsOn             = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
-#           DependsOn            = "[SPFarmAdministrators]AddFarmAdmins"
         }
  
         if ($ServerRole -eq "DistributedCache" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
@@ -275,7 +273,8 @@ configuration CreateJoinFarm
             PsDscRunAsCredential = $SPSetupAccountCreds
              DependsOn           = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
-     if ($ServerRole -eq "WebFrontEnd")
+        
+		if ($ServerRole -eq "WebFrontEnd")
 		{		
         SPWebApplication SharePointSites
         {
@@ -353,37 +352,37 @@ configuration CreateJoinFarm
 
        if ($ServerRole -eq "WebFrontEnd" -or $ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
-		SPServiceInstance AppManagementServiceInstance
-		{  
-			Name                 = "App Management Service"
-			Ensure               = "Present"
-			PsDscRunAsCredential = $SPSetupAccountCreds
-			DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
+			SPServiceInstance AppManagementServiceInstance
+			{  
+				Name                 = "App Management Service"
+				Ensure               = "Present"
+				PsDscRunAsCredential = $SPSetupAccountCreds
+				DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
+			}
+			SPServiceInstance ManagedMetadataServiceInstance
+			{  
+				Name                 = "Managed Metadata Web Service"
+				Ensure               = "Present"
+				PsDscRunAsCredential = $SPSetupAccountCreds
+				DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
+			}
+			SPServiceInstance SubscriptionSettingsServiceInstance
+			{  
+				Name                 = "Microsoft SharePoint Foundation Subscription Settings Service"
+				Ensure               = "Present"
+				PsDscRunAsCredential = $SPSetupAccountCreds
+				DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
+			}
+			SPServiceInstance UserProfileServiceInstance
+			{  
+				Name                 = "User Profile Service"
+				Ensure               = "Present"
+				PsDscRunAsCredential = $SPSetupAccountCreds
+				DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
+			}
 		}
-		SPServiceInstance ManagedMetadataServiceInstance
-		{  
-			Name                 = "Managed Metadata Web Service"
-			Ensure               = "Present"
-			PsDscRunAsCredential = $SPSetupAccountCreds
-			DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
-		}
-		SPServiceInstance SubscriptionSettingsServiceInstance
-		{  
-			Name                 = "Microsoft SharePoint Foundation Subscription Settings Service"
-			Ensure               = "Present"
-			PsDscRunAsCredential = $SPSetupAccountCreds
-			DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
-		}
-		SPServiceInstance UserProfileServiceInstance
-		{  
-			Name                 = "User Profile Service"
-			Ensure               = "Present"
-			PsDscRunAsCredential = $SPSetupAccountCreds
-			DependsOn            = "[SPServiceAppPool]MainServiceAppPool" 
-		}
-}
 
-		        if ($ServerRole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
+		if ($ServerRole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
             SPServiceInstance SearchServiceInstance
             {  
@@ -402,7 +401,7 @@ configuration CreateJoinFarm
 
        if ($ServerRole -eq "WebFrontEnd" -or $ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
-					 SPAppManagementServiceApp AppManagementServiceApp
+		SPAppManagementServiceApp AppManagementServiceApp
 		{
 			Name                 = "App Management Service Application"
 			ApplicationPool      = $serviceAppPoolName
@@ -428,9 +427,27 @@ configuration CreateJoinFarm
 			DatabaseName         = "SP2016_MMS"
 			DependsOn             = @('[SPServiceAppPool]MainServiceAppPool', '[SPServiceInstance]ManagedMetadataServiceInstance')
 		}
-
-		SPUserProfileServiceApp UserProfileApp
+		if ($ServerRole -eq "WebFrontEnd" )
 		{
+			SPUserProfileServiceApp UserProfileApp
+			{
+				Name = "User Profile Service Application"
+				ProfileDBName = "SP2016_Profile"
+				ProfileDBServer = $SqlAlwaysOnEndpointName
+				SocialDBName = "SP2016_Social"
+				SocialDBServer = $SqlAlwaysOnEndpointName
+				SyncDBName = "SP2016_Sync"
+				SyncDBServer = $SqlAlwaysOnEndpointName
+				MySiteHostLocation = "http://OneDrive.$DomainFQDNName"
+				FarmAccount  =  $FarmAccountCreds
+				ApplicationPool       = $serviceAppPoolName
+				PsDscRunAsCredential  = $SPSetupAccountCreds
+				DependsOn             = '[SPServiceAppPool]MainServiceAppPool'
+			}
+		}
+		else
+		{
+			{
 			Name = "User Profile Service Application"
 			ProfileDBName = "SP2016_Profile"
 			ProfileDBServer = $SqlAlwaysOnEndpointName
@@ -438,14 +455,14 @@ configuration CreateJoinFarm
 			SocialDBServer = $SqlAlwaysOnEndpointName
 			SyncDBName = "SP2016_Sync"
 			SyncDBServer = $SqlAlwaysOnEndpointName
-			MySiteHostLocation = "http://OneDrive.$DomainFQDNName"
 			FarmAccount  =  $FarmAccountCreds
 			ApplicationPool       = $serviceAppPoolName
 			PsDscRunAsCredential  = $SPSetupAccountCreds
 			DependsOn             = '[SPServiceAppPool]MainServiceAppPool'
-		}
-                 }       
-		        if($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
+			}
+        }   
+		    
+		if($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
            SPSearchServiceApp SearchServiceApp
             {  
@@ -484,5 +501,6 @@ configuration CreateJoinFarm
             ConfigurationMode = 'ApplyOnly'
             AllowModuleOverWrite = $true
 		}
+	}
 	}
 }
