@@ -442,7 +442,7 @@ configuration CreateJoinFarm
 			FarmAccount  =  $FarmAccountCreds
 			ApplicationPool       = $serviceAppPoolName
 			PsDscRunAsCredential  = $SPSetupAccountCreds
-			DependsOn             = @('[SPServiceAppPool]MainServiceAppPool', '[SPSite]MySiteHost')
+			DependsOn             = '[SPServiceAppPool]MainServiceAppPool'
 		}
                  }       
 		        if($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
