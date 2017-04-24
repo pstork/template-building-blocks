@@ -87,14 +87,7 @@ configuration CreateJoinFarm
             DependsOn = '[xDisk]ADDataDisk2'
         }
 
-        WindowsFeature DNSPowerShell
-        {
-            Ensure = "Present"
-            Name = "RSAT-DNS-Server"
-            DependsOn = '[xDisk]ADDataDisk2'
-        }
-	
-        xADUser CreateFarmAccount
+         xADUser CreateFarmAccount
         {
             DomainName = $domainName
             UserName = $FarmAccount.UserName
