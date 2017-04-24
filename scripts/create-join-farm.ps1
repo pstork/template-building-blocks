@@ -87,6 +87,13 @@ configuration CreateJoinFarm
             DependsOn = '[xDisk]ADDataDisk2'
         }
 
+		WindowsFeature DNSPowerShell
+        {
+            Ensure = "Present"
+            Name = "RSAT-DNS-Server"
+            DependsOn = '[xDisk]ADDataDisk2'
+        }
+
          xADUser CreateFarmAccount
         {
             DomainName = $domainName
@@ -439,8 +446,10 @@ configuration CreateJoinFarm
                     DependsOn = '[SPServiceAppPool]MainServiceAppPool'
                 }
             }
-            else
-            {
+  if ($ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
+        {
+			SPUserProfileServiceApp UserProfileApp
+			{
                 Name = "User Profile Service Application"
                 ProfileDBName = "SP2016_Profile"
                 ProfileDBServer = $SqlAlwaysOnEndpointName
@@ -454,6 +463,7 @@ configuration CreateJoinFarm
                 DependsOn             = '[SPServiceAppPool]MainServiceAppPool'
             }
         }       
+
         if ($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
             SPSearchServiceApp SearchServiceApp
@@ -494,4 +504,5 @@ configuration CreateJoinFarm
             AllowModuleOverWrite = $true
         }
     }
+}
 }
