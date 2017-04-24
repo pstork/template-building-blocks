@@ -63,7 +63,7 @@ configuration CreateJoinFarm
         $runCentralAdmin = $true
     }
 	
-    node "localhost"
+    node localhost
     {
         xWaitforDisk Disk2
         {
