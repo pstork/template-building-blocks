@@ -87,14 +87,14 @@ configuration CreateJoinFarm
             DependsOn = '[xDisk]ADDataDisk2'
         }
 
-		WindowsFeature DNSPowerShell
+        WindowsFeature DNSPowerShell
         {
             Ensure = "Present"
             Name = "RSAT-DNS-Server"
             DependsOn = '[xDisk]ADDataDisk2'
         }
 
-         xADUser CreateFarmAccount
+        xADUser CreateFarmAccount
         {
             DomainName = $domainName
             UserName = $FarmAccount.UserName
@@ -257,7 +257,7 @@ configuration CreateJoinFarm
                 ServiceAccount = $ServicePoolManagedAccountCreds.UserName
                 PsDscRunAsCredential = $SPSetupAccountCreds
                 CreateFirewallRules = $true
-                DependsOn = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
+                DependsOn = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]ServicePoolManagedAccount")
             }
         }     
         #**********************************************************
@@ -271,7 +271,7 @@ configuration CreateJoinFarm
         SPServiceAppPool MainServiceAppPool
         {
             Name = $serviceAppPoolName
-            ServiceAccount = $ServicePoolManagedAccount.UserName
+            ServiceAccount = $ServicePoolManagedAccountCreds.UserName
             PsDscRunAsCredential = $SPSetupAccountCreds
             DependsOn = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
         }
@@ -281,7 +281,7 @@ configuration CreateJoinFarm
             {
                 Name = "SharePoint Sites"
                 ApplicationPool = $webAppPoolName
-                ApplicationPoolAccount = $WebPoolManagedAccount.UserName
+                ApplicationPoolAccount = $WebPoolManagedAccountCreds.UserName
                 AllowAnonymous = $false
                 AuthenticationMethod = "NTLM"
                 DatabaseName = "SP2016_Sites_Content"
@@ -295,7 +295,7 @@ configuration CreateJoinFarm
             {
                 Name = "OneDrive"
                 ApplicationPool = $webAppPoolName
-                ApplicationPoolAccount = $WebPoolManagedAccount.UserName
+                ApplicationPoolAccount = $WebPoolManagedAccountCreds.UserName
                 AllowAnonymous = $false
                 AuthenticationMethod = "NTLM"
                 DatabaseName = "SP2016_Sites_OneDrive"
@@ -327,7 +327,7 @@ configuration CreateJoinFarm
             SPSite TeamSite
             {
                 Url = "http://Portal.$DomainFQDNName"
-                OwnerAlias = $SPSetupAccount.UserName
+                OwnerAlias = $SPSetupAccountCreds.UserName
                 Name = "Root Demo Site"
                 Template = "STS#0"
                 PsDscRunAsCredential = $SPSetupAccountCreds
@@ -337,7 +337,7 @@ configuration CreateJoinFarm
             SPSite MySiteHost
             {
                 Url = "http://OneDrive.$DomainFQDNName"
-                OwnerAlias = $SPSetupAccount.UserName
+                OwnerAlias = $SPSetupAccountCreds.UserName
                 Name = "OneDrive"
                 Template = "SPSMSITEHOST#0"
                 PsDscRunAsCredential = $SPSetupAccountCreds
@@ -446,24 +446,24 @@ configuration CreateJoinFarm
                     DependsOn = '[SPServiceAppPool]MainServiceAppPool'
                 }
             }
-  if ($ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
-        {
-			SPUserProfileServiceApp UserProfileApp
-			{
-                Name = "User Profile Service Application"
-                ProfileDBName = "SP2016_Profile"
-                ProfileDBServer = $SqlAlwaysOnEndpointName
-                SocialDBName = "SP2016_Social"
-                SocialDBServer = $SqlAlwaysOnEndpointName
-                SyncDBName = "SP2016_Sync"
-                SyncDBServer = $SqlAlwaysOnEndpointName
-                FarmAccount  =  $FarmAccountCreds
-                ApplicationPool       = $serviceAppPoolName
-                PsDscRunAsCredential  = $SPSetupAccountCreds
-                DependsOn             = '[SPServiceAppPool]MainServiceAppPool'
-            }
-        }       
-
+            if ($ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
+            {
+                SPUserProfileServiceApp UserProfileApp
+                {
+                    Name = "User Profile Service Application"
+                    ProfileDBName = "SP2016_Profile"
+                    ProfileDBServer = $SqlAlwaysOnEndpointName
+                    SocialDBName = "SP2016_Social"
+                    SocialDBServer = $SqlAlwaysOnEndpointName
+                    SyncDBName = "SP2016_Sync"
+                    SyncDBServer = $SqlAlwaysOnEndpointName
+                    FarmAccount = $FarmAccountCreds
+                    ApplicationPool = $serviceAppPoolName
+                    PsDscRunAsCredential = $SPSetupAccountCreds
+                    DependsOn = '[SPServiceAppPool]MainServiceAppPool'
+                }
+            }       
+        }
         if ($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
             SPSearchServiceApp SearchServiceApp
@@ -472,21 +472,21 @@ configuration CreateJoinFarm
                 Ensure = "Present"
                 DatabaseName = "SP_Search"
                 ApplicationPool = $serviceAppPoolName
-                DefaultContentAccessAccount = $SPSetupAccountcreds
-                PsDscRunAsCredential = $SPSetupAccountcreds
+                DefaultContentAccessAccount = $SPSetupAccountCreds
+                PsDscRunAsCredential = $SPSetupAccountCreds
                 DependsOn = @('[SPServiceAppPool]MainServiceAppPool', '[SPServiceInstance]SearchServiceInstance')
             }        
             SPSearchTopology LocalSearchTopology
             {
                 ServiceAppName = "Search Service Application"
-                Admin = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                Crawler = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                ContentProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                AnalyticsProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                QueryProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                Admin = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                Crawler = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                ContentProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                AnalyticsProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                QueryProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
                 PsDscRunAsCredential = $SPSetupAccountcreds
                 FirstPartitionDirectory = "F:\SearchIndexes\0"
-                IndexPartition = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                IndexPartition = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
                 DependsOn = "[SPSearchServiceApp]SearchServiceApp"
             }
         }
@@ -504,5 +504,4 @@ configuration CreateJoinFarm
             AllowModuleOverWrite = $true
         }
     }
-}
 }
