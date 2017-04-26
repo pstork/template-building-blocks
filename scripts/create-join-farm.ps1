@@ -234,7 +234,6 @@ configuration CreateJoinFarm
             UsageLogMaxFileSizeKB = 1024
             PsDscRunAsCredential = $SPSetupAccountCreds
             DependsOn = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
-            #            DependsOn             = "[SPFarmAdministrators]AddFarmAdmins"
         }
 
         SPStateServiceApp StateServiceApp
@@ -243,7 +242,6 @@ configuration CreateJoinFarm
             DatabaseName = "SP2016_State"
             PsDscRunAsCredential = $SPSetupAccountCreds
             DependsOn = @("[SPFarm]CreateSPFarm", "[SPManagedAccount]WebPoolManagedAccount")
-            #           DependsOn            = "[SPFarmAdministrators]AddFarmAdmins"
         }
  
         if ($ServerRole -eq "DistributedCache" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
@@ -309,8 +307,8 @@ configuration CreateJoinFarm
             SPCacheAccounts WebAppCacheAccounts
             {
                 WebAppUrl = "http://Portal.$DomainFQDNName"
-                SuperUserAlias = "${DomainName}\$($SuperUserAlias)"
-                SuperReaderAlias = "${DomainName}\$($SuperReaderAlias)"
+                SuperUserAlias = "${DomainName}\$SuperUserAlias"
+                SuperReaderAlias = "${DomainName}\$SuperReaderAlias"
                 PsDscRunAsCredential = $SPSetupAccountCreds
                 DependsOn = "[SPWebApplication]SharePointSites"
             }
@@ -318,8 +316,8 @@ configuration CreateJoinFarm
             SPCacheAccounts OneDriveCacheAccounts
             {
                 WebAppUrl = "http://OneDrive.$DomainFQDNName"
-                SuperUserAlias = "${DomainName}\$($SuperUserAlias)"
-                SuperReaderAlias = "${DomainName}\$($SuperReaderAlias)"
+                SuperUserAlias = "${DomainName}\$SuperUserAlias"
+                SuperReaderAlias = "${DomainName}\$SuperReaderAlias"
                 PsDscRunAsCredential = $SPSetupAccountCreds
                 DependsOn = "[SPWebApplication]OneDriveSites"
             }
@@ -446,6 +444,7 @@ configuration CreateJoinFarm
                     DependsOn = '[SPServiceAppPool]MainServiceAppPool'
                 }
             }
+
             if ($ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
             {
                 SPUserProfileServiceApp UserProfileApp
@@ -464,6 +463,7 @@ configuration CreateJoinFarm
                 }
             }       
         }
+        
         if ($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
         {
             SPSearchServiceApp SearchServiceApp
@@ -479,14 +479,14 @@ configuration CreateJoinFarm
             SPSearchTopology LocalSearchTopology
             {
                 ServiceAppName = "Search Service Application"
-                Admin = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
-                Crawler = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
-                ContentProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
-                AnalyticsProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
-                QueryProcessing = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                Admin = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                Crawler = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                ContentProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                AnalyticsProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                QueryProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
                 PsDscRunAsCredential = $SPSetupAccountcreds
                 FirstPartitionDirectory = "F:\SearchIndexes\0"
-                IndexPartition = @("srch1.$($DomainFQDNName)", "srch2.$($DomainFQDNName)")
+                IndexPartition = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
                 DependsOn = "[SPSearchServiceApp]SearchServiceApp"
             }
         }
