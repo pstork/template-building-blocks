@@ -459,14 +459,14 @@ configuration CreateJoinFarm
             SPSearchTopology LocalSearchTopology
             {
                 ServiceAppName = "Search Service Application"
-                Admin = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                Crawler = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                ContentProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                AnalyticsProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
-                QueryProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                Admin = @("srch1", "srch2")
+                Crawler = @("srch1", "srch2")
+                ContentProcessing = @("srch1", "srch2")
+                AnalyticsProcessing = @("srch1", "srch2")
+                QueryProcessing = @("srch1", "srch2")
                 PsDscRunAsCredential = $SPSetupAccountcreds
                 FirstPartitionDirectory = "F:\SearchIndexes\0"
-                IndexPartition = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                IndexPartition = @("srch1", "srch2")
                 DependsOn = "[SPSearchServiceApp]SearchServiceApp"
             }
         }
