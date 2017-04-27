@@ -191,7 +191,6 @@ configuration CreateJoinFarm
             DependsOn = @("[SPFarm]CreateSPFarm", "[xADUser]ServicePoolManagedAccount")
         }
 
-
         SPManagedAccount WebPoolManagedAccount
         {
             AccountName = $WebPoolManagedAccountCreds.UserName
@@ -250,7 +249,6 @@ configuration CreateJoinFarm
             {
                 Name = "AppFabricCachingService"
                 Ensure = "Present"
-                ServerProvisionOrder = @("dch1.$DomainFQDNName", "dch2.$DomainFQDNName")
                 CacheSizeInMB = 1024
                 ServiceAccount = $ServicePoolManagedAccountCreds.UserName
                 PsDscRunAsCredential = $SPSetupAccountCreds
@@ -426,7 +424,7 @@ configuration CreateJoinFarm
                 DatabaseName = "SP2016_MMS"
                 DependsOn = @('[SPServiceAppPool]MainServiceAppPool', '[SPServiceInstance]ManagedMetadataServiceInstance')
             }
-            if ($ServerRole -eq "WebFrontEnd" )
+            if ($ServerRole -eq "WebFrontEnd" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
             {
                 SPUserProfileServiceApp UserProfileApp
                 {
@@ -444,26 +442,34 @@ configuration CreateJoinFarm
                     DependsOn = '[SPServiceAppPool]MainServiceAppPool'
                 }
             }
-
-            if ($ServerRole -eq "Application" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
-            {
-                SPUserProfileServiceApp UserProfileApp
-                {
-                    Name = "User Profile Service Application"
-                    ProfileDBName = "SP2016_Profile"
-                    ProfileDBServer = $SqlAlwaysOnEndpointName
-                    SocialDBName = "SP2016_Social"
-                    SocialDBServer = $SqlAlwaysOnEndpointName
-                    SyncDBName = "SP2016_Sync"
-                    SyncDBServer = $SqlAlwaysOnEndpointName
-                    FarmAccount = $FarmAccountCreds
-                    ApplicationPool = $serviceAppPoolName
-                    PsDscRunAsCredential = $SPSetupAccountCreds
-                    DependsOn = '[SPServiceAppPool]MainServiceAppPool'
-                }
-            }       
         }
         
+        if ($serverrole -eq "Search" -or $ServerRole -eq "SingleServerFarm" -or $ServerRole -eq "Custom" )
+        {
+            SPSearchServiceApp SearchServiceApp
+            {  
+                Name = "Search Service Application"
+                Ensure = "Present"
+                DatabaseName = "SP_Search"
+                ApplicationPool = $serviceAppPoolName
+                DefaultContentAccessAccount = $SPSetupAccountCreds
+                PsDscRunAsCredential = $SPSetupAccountCreds
+                DependsOn = @('[SPServiceAppPool]MainServiceAppPool', '[SPServiceInstance]SearchServiceInstance')
+            }        
+            SPSearchTopology LocalSearchTopology
+            {
+                ServiceAppName = "Search Service Application"
+                Admin = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                Crawler = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                ContentProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                AnalyticsProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                QueryProcessing = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                PsDscRunAsCredential = $SPSetupAccountcreds
+                FirstPartitionDirectory = "F:\SearchIndexes\0"
+                IndexPartition = @("srch1.$DomainFQDNName", "srch2.$DomainFQDNName")
+                DependsOn = "[SPSearchServiceApp]SearchServiceApp"
+            }
+        }
         #**********************************************************
         # Local configuration manager settings
         #
