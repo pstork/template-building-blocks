@@ -10,7 +10,7 @@
     "instance": {
       "settings": {
         "fileUris": "[parameters('source').settingsConfig.fileUris]",
-        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -Command \"& {.\\add-dns.ps1 \\\"}\"')]"
+        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -Command \"& {.\\add-dns.ps1 \\}\"')]"
       },
       "protectedSettings": { }
     }
