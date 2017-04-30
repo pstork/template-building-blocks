@@ -19,7 +19,7 @@
       "kind": "Storage",
       "sku": {
         "name": "[parameters('skuName')]"
-      }
+		"skuName": "[parameters('skuName')]"      }
     }
   ]
 }
