@@ -18,7 +18,7 @@
       "name": "[concat(parameters('name'), add(parameters('iteration'), 1))]",
       "kind": "Storage",
       "sku": {
-        "name": "[parameters('skuName')]"
+        "name": "[parameters('skuName')]",
 		"skuName": "[parameters('skuName')]"      }
     }
   ]
