@@ -34,8 +34,7 @@
           },
           "name": { "value": "[parameters('name')]" },
           "location": { "value": "[parameters('location')]" },
-          "iteration": { "value": "[copyIndex()]" },
-          "skuName": { "value": "[parameters('skuName')]" }
+          "iteration": { "value": "[copyIndex()]" }
         }
       }
     }
