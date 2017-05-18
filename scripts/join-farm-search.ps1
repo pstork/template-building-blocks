@@ -89,7 +89,7 @@ configuration CreateJoinFarm
 
         xWaitForADDomain DscForestWait 
         { 
-            DomainName = $domainName
+            DomainName = $DomainFQDNName
             DomainUserCredential= $SPSetupAccountCreds
             RetryCount = $RetryCount 
             RetryIntervalSec = $RetryIntervalSec 
@@ -99,7 +99,7 @@ configuration CreateJoinFarm
         xComputer DomainJoin
         {
             Name = $env:COMPUTERNAME
-            DomainName = $domainName
+            DomainName = $DomainFQDNName
             Credential = $SPSetupAccountCreds
 	        DependsOn = "[xWaitForADDomain]DscForestWait"
         }
