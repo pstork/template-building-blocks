@@ -87,6 +87,23 @@ configuration CreateJoinFarm
             DependsOn = '[xDisk]ADDataDisk2'
         }
 
+        xWaitForADDomain DscForestWait 
+        { 
+            DomainName = $domainName
+            DomainUserCredential= $SPSetupAccountCreds
+            RetryCount = $RetryCount 
+            RetryIntervalSec = $RetryIntervalSec 
+	        DependsOn = "[WindowsFeature]ADPowerShell"
+        }
+
+        xComputer DomainJoin
+        {
+            Name = $env:COMPUTERNAME
+            DomainName = $domainName
+            Credential = $SPSetupAccountCreds
+	        DependsOn = "[xWaitForADDomain]DscForestWait"
+        }
+
         WindowsFeature DNSPowerShell
         {
             Ensure = "Present"
@@ -103,7 +120,7 @@ configuration CreateJoinFarm
             Ensure = 'Present'
             Password = $FarmAccountCreds
             DomainAdministratorCredential = $SPSetupAccountCreds
-            DependsOn = "[WindowsFeature]ADPowerShell"
+            DependsOn = "[xComputer]DomainJoin"
         }
 		
         xADUser ServicePoolManagedAccount
@@ -115,7 +132,7 @@ configuration CreateJoinFarm
             Ensure = "Present"
             Password = $ServicePoolManagedAccountCreds
             DomainAdministratorCredential = $SPSetupAccountCreds
-            DependsOn = "[WindowsFeature]ADPowerShell"
+            DependsOn = "[xComputer]DomainJoin"
         }		
 
         xADUser WebPoolManagedAccount
@@ -167,7 +184,7 @@ configuration CreateJoinFarm
             Ensure = 'Present'
             Password = $Passphrase
             DomainAdministratorCredential = $SPSetupAccountCreds
-            DependsOn = "[WindowsFeature]ADPowerShell"
+            DependsOn = "[xComputer]DomainJoin"
         }
 
         xADUser SPSuperReader
@@ -179,7 +196,7 @@ configuration CreateJoinFarm
             Ensure = 'Present'
             Password = $Passphrase
             DomainAdministratorCredential = $SPSetupAccountCreds
-            DependsOn = "[WindowsFeature]ADPowerShell"
+            DependsOn = "[xComputer]DomainJoin"
         }		
 
         SPManagedAccount ServicePoolManagedAccount
