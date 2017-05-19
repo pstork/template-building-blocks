@@ -107,7 +107,7 @@
           "name": { "value": "[variables('storageAccount').vhd]" },
           "location": { "value": "[variables('location')]" },
           "storageAccountsCount": { "value": "[parameters('buildingBlockSettings').storageAccountsCount]" },
-          "skuName": { "value": "Premium_LRS" }
+          "skuName": { "value": "Standard_LRS" }
         }
       }
     },
